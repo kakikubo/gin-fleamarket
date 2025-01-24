@@ -54,6 +54,7 @@ func (r *ItemMemoryRepository) Delete(itemId uint) error {
 	for i, v := range r.items {
 		if v.ID == itemId {
 			// スライスの要素を削除する操作
+			// サンプル https://go.dev/play/p/pA4u3eSoLT3
 			r.items = append(r.items[:i], r.items[i+1:]...)
 			return nil
 		}
