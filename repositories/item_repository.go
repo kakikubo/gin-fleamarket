@@ -33,7 +33,7 @@ func (r *ItemMemoryRepository) FindById(itemId uint) (*models.Item, error) {
 			return &v, nil
 		}
 	}
-	return nil, errors.New("Item not found")
+	return nil, errors.New("item not found")
 }
 
 func (r *ItemMemoryRepository) Create(newItem models.Item) (*models.Item, error) {
@@ -83,13 +83,27 @@ func (i *ItemRepository) Delete(itemId uint) error {
 }
 
 // FindAll implements IItemRepository.
-func (i *ItemRepository) FindAll() (*[]models.Item, error) {
-	panic("unimplemented")
+func (r *ItemRepository) FindAll() (*[]models.Item, error) {
+	var items []models.Item
+	result := r.db.Find(&items)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &items, nil
 }
 
 // FindById implements IItemRepository.
-func (i *ItemRepository) FindById(itemId uint) (*models.Item, error) {
-	panic("unimplemented")
+func (r *ItemRepository) FindById(itemId uint) (*models.Item, error) {
+	var item models.Item
+	result := r.db.First(&item, itemId)
+
+	if result.Error != nil {
+		if result.Error.Error() == "record not found" {
+			return nil, errors.New("Item not found")
+		}
+		return nil, result.Error
+	}
+	return &item, nil
 }
 
 // Update implements IItemRepository.
