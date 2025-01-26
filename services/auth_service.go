@@ -3,6 +3,9 @@ package services
 import (
 	"gin-fleamarket/models"
 	"gin-fleamarket/repositories"
+	"github.com/golang-jwt/jwt/v5"
+	"os"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -48,5 +51,24 @@ func (s *AuthService) Login(email string, password string) (*string, error) {
 		return nil, err
 	}
 
-	return &foundUser.Email, nil
+	token, err := CreateToken(foundUser.ID, foundUser.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return token, nil
+}
+
+func CreateToken(userId uint, email string) (*string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub":   userId,
+		"email": email,
+		"exp":   time.Now().Add(time.Hour).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
+	if err != nil {
+		return nil, err
+	}
+	return &tokenString, nil
 }
