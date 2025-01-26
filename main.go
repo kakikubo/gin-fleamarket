@@ -26,6 +26,10 @@ func main() {
 	itemService := services.NewItemService(itemRepository)
 	itemController := controllers.NewItemController(itemService)
 
+	authRepository := repositories.NewAuthRepository(db)
+	authService := services.NewAuthService(authRepository)
+	authController := controllers.NewAuthController(authService)
+
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -33,10 +37,14 @@ func main() {
 		})
 	})
 	itemRouter := r.Group("/items")
+	authRouter := r.Group("/auth")
+
 	itemRouter.GET("", itemController.FindAll)
 	itemRouter.GET("/:id", itemController.FindById)
 	itemRouter.POST("", itemController.Create)
 	itemRouter.PUT("/:id", itemController.Update)
 	itemRouter.DELETE("/:id", itemController.Delete)
+
+	authRouter.POST("/signup", authController.Signup)
 	r.Run("localhost:8080") // 0.0.0.0:8080 でサーバーを立てます。
 }
