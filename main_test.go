@@ -1,13 +1,19 @@
 package main
 
 import (
+	"encoding/json"
 	"gin-fleamarket/infra"
 	"gin-fleamarket/models"
+	"log"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"os/exec"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"log"
-	"os"
-	"testing"
+	"gotest.tools/v3/assert"
 
 	"github.com/joho/godotenv"
 )
@@ -15,6 +21,11 @@ import (
 func TestMain(m *testing.M) {
 	if err := godotenv.Load(".env.test"); err != nil {
 		log.Fatalln("Error loading .env.test file")
+	}
+
+	// Add this line to install the missing package
+	if err := exec.Command("go", "get", "gotest.tools/v3/assert").Run(); err != nil {
+		log.Fatalln("Error installing gotest.tools/v3/assert package")
 	}
 
 	code := m.Run()
@@ -50,4 +61,23 @@ func setup() *gin.Engine {
 	router := setupRouter(db)
 
 	return router
+}
+
+func TestFindAll(t *testing.T) {
+	// テストのセットアップ
+	router := setup()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/items", nil)
+
+	// APIリクエストの実行
+	router.ServeHTTP(w, req)
+
+	// APIの実行結果を取得
+	var res map[string][]models.Item
+	json.Unmarshal([]byte(w.Body.String()), &res)
+
+	// アサーション
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, 3, len(res["data"]))
 }

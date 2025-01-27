@@ -27,7 +27,7 @@ func SetupDB() *gorm.DB {
 	)
 
 	if env == "prod" {
-		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 		log.Println("Setup PostgreSQL database")
 	} else {
 		db, err = gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
