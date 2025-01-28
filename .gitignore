@@ -28,4 +28,5 @@ tmp
 docker/
 .idea
 
-.env*
+.env
+!.env.test
