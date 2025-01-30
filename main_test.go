@@ -165,3 +165,30 @@ func TestUpdate(t *testing.T) {
 	assert.Equal(t, description, res["data"].Description)
 
 }
+
+func TestDelete(t *testing.T) {
+	// テストのセットアップ
+	router := setup()
+
+	token, err := services.CreateToken(1, "test1@example.com")
+	assert.Equal(t, nil, err)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("DELETE", "/items/1", nil)
+	req.Header.Set("Authorization", "Bearer "+*token)
+
+	router.ServeHTTP(w, req)
+	var res map[string]models.Item
+	json.Unmarshal([]byte(w.Body.String()), &res)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest("GET", "/items/1", nil)
+	req.Header.Set("Authorization", "Bearer "+*token)
+
+	router.ServeHTTP(w, req)
+	json.Unmarshal([]byte(w.Body.String()), &res)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
+}
