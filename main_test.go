@@ -139,3 +139,29 @@ func TestCreateUnauthorized(t *testing.T) {
 	// アサーション
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 }
+
+func TestUpdate(t *testing.T) {
+	// テストのセットアップ
+	router := setup()
+
+	token, err := services.CreateToken(1, "test1@example.com")
+	assert.Equal(t, nil, err)
+
+	description := "Updateテスト"
+	updateItemInput := dto.UpdateItemInput{
+		Description: &description,
+	}
+	reqBody, _ := json.Marshal(updateItemInput)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("PUT", "/items/1", bytes.NewBuffer(reqBody))
+	req.Header.Set("Authorization", "Bearer "+*token)
+
+	router.ServeHTTP(w, req)
+	var res map[string]models.Item
+	json.Unmarshal([]byte(w.Body.String()), &res)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, description, res["data"].Description)
+
+}
