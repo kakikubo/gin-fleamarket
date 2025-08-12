@@ -18,7 +18,7 @@ jobs:
         with:
           # github-token: ${{ secrets.GITHUB_TOKEN }}
           show-waiting-runner: true
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Go Package
         uses: actions/setup-go@v5
         with:
