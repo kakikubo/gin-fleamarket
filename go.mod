@@ -10,7 +10,7 @@ require (
 	golang.org/x/crypto v0.42.0
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/driver/sqlite v1.6.0
-	gorm.io/gorm v1.30.5
+	gorm.io/gorm v1.31.0
 	gotest.tools/v3 v3.5.2
 )
 
