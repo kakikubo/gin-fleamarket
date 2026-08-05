@@ -2,5 +2,46 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "automergeStrategy": "merge-commit",
+  "packageRules": [
+    {
+      "description": "テスト用 Go モジュールの minor/patch は automerge",
+      "matchManagers": [
+        "gomod"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "automerge": true,
+      "platformAutomerge": true,
+      "matchPackageNames": [
+        "gotest.tools/v3",
+        "github.com/google/go-cmp",
+        "github.com/stretchr/testify"
+      ]
+    },
+    {
+      "description": "信頼できる GitHub Actions の minor/patch/digest は automerge",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ],
+      "automerge": true,
+      "platformAutomerge": true,
+      "matchPackageNames": [
+        "actions/checkout",
+        "actions/setup-go",
+        "codecov/codecov-action",
+        "Kesin11/actions-timeline",
+        "release-drafter/release-drafter",
+        "ruby/setup-ruby"
+      ]
+    }
   ]
 }
